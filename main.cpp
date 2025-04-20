@@ -43,17 +43,21 @@ int main(int argc, char *argv[])
                 std::string cmdDrop = std::format("git annex drop {}", quotedFilename);
                 std::string cmdCopy =
                     std::format("git annex copy {} --to={}", quotedFilename, remote);
-                int resultWrong = system("git annex get blarg");
+
                 int result = system(cmdGet.c_str());
                 if (result != 0)
                 {
-                    result = system(cmdCopy.c_str());
-                    if (result == 0)
-                    {
-                        store.UpdateFileStatus(entry, FileStatus::Uploaded);
-                    }
-                    result = system(cmdDrop.c_str());
+                    continue;
                 }
+
+                result = system(cmdCopy.c_str());
+                if (result != 0)
+                {
+                    continue;
+                }
+
+                store.UpdateFileStatus(entry, FileStatus::Uploaded);
+                result = system(cmdDrop.c_str());
             }
         }
     }

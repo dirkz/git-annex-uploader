@@ -16,7 +16,6 @@ struct FileStatusStore
     ~FileStatusStore();
 
     FileStatus GetFileStatus(std::filesystem::path filename);
-    int64_t GetFileID(std::filesystem::path filename);
     void UpdateFileStatus(std::filesystem::path filename, FileStatus status);
 
   private:

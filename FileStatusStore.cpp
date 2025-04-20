@@ -1,5 +1,6 @@
 #include "FileStatusStore.h"
 
+#include <format>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -93,38 +94,24 @@ FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
     return status;
 }
 
-int64_t FileStatusStore::GetFileID(std::filesystem::path filename)
-{
-    int result =
-        sqlite3_bind_text(m_stmtGetStatus, 1, filename.string().c_str(), -1, SQLITE_STATIC);
-    CheckResult(result);
-
-    int64_t id = -1;
-
-    result = sqlite3_step(m_stmtGetStatus);
-
-    switch (result)
-    {
-    case SQLITE_DONE:
-        break;
-    case SQLITE_ROW:
-        id = static_cast<int64_t>(sqlite3_column_int64(m_stmtGetStatus, 1));
-        break;
-    default:
-        CheckResult(result);
-    }
-
-    result = sqlite3_reset(m_stmtGetStatus);
-    CheckResult(result);
-
-    return id;
-}
-
 void FileStatusStore::UpdateFileStatus(std::filesystem::path filename, FileStatus status)
 {
-    int64_t existing = GetFileID(filename);
-    if (existing == -1)
+    int result =
+        sqlite3_bind_text(m_stmtInsertFile, 1, filename.string().c_str(), -1, SQLITE_STATIC);
+    CheckResult(result);
+
+    result = sqlite3_bind_int(m_stmtInsertFile, 2, static_cast<int>(status));
+    CheckResult(result);
+
+    int resultStep = sqlite3_step(m_stmtInsertFile);
+
+    result = sqlite3_reset(m_stmtInsertFile);
+    CheckResult(result);
+
+    if (resultStep != SQLITE_DONE)
     {
+        std::string errorMsg = std::format("could not update {}", filename.string());
+        throw std::runtime_error{errorMsg.c_str()};
     }
 }
 
