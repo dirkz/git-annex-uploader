@@ -11,12 +11,13 @@ enum FileStatus
     Uploaded
 };
 
-constexpr char *CreateStatement = R"(
+constexpr const char *CreateStatement = R"(
     CREATE TABLE IF NOT EXISTS files (
         id INT PRIMARY KEY NOT NULL,
         name TEXT NOT NULL,
         status INT NOT NULL
     );
+    CREATE INDEX IF NOT EXISTS filename_index ON files(name);
 )";
 
 FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
