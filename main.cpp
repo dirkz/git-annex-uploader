@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
     cout << "Remote " << remote << "\n";
     cout << "Processing " << directory << " ...\n";
 
+    fs::current_path(directory);
+
     fs::path exePath{argv[0]};
     fs::path currentDir = exePath.parent_path();
 
@@ -34,6 +36,10 @@ int main(int argc, char *argv[])
         if (entry.is_symlink())
         {
             FileStatus status = store.GetFileStatus(entry);
+            if (status == FileStatus::None)
+            {
+
+            }
         }
     }
 
