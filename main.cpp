@@ -15,6 +15,8 @@ int main(int argc, char *argv[])
     }
 
     string directory{argv[1]};
+    string remote{argv[2]};
+    cout << "Remote " << remote << "\n";
     cout << "Processing " << directory << " ...\n";
 
     return 0;
