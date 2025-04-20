@@ -1,5 +1,6 @@
 ﻿#include <cstdlib>
 #include <filesystem>
+#include <format>
 #include <iostream>
 
 #include "FileStatusStore.h"
@@ -37,7 +38,9 @@ int main(int argc, char *argv[])
             FileStatus status = store.GetFileStatus(entry);
             if (status == FileStatus::None)
             {
-
+                std::string cmdGet = std::format("git annex get \"{}\"", entry.path().string());
+                std::string cmdDrop = std::format("git annex drop \"{}\"", entry.path().string());
+                std::cout << cmdGet << "\n";
             }
         }
     }
