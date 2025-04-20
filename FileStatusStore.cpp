@@ -69,6 +69,7 @@ FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
     CheckResult(result);
 
     result = sqlite3_step(m_stmtGetStatus);
+    CheckResult(result);
     if (result != SQLITE_DONE)
     {
         auto errorMsg = std::string{"double entry for "} + filename.string();
@@ -80,7 +81,7 @@ FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
 
 void FileStatusStore::CheckResult(int result)
 {
-    if (result != SQLITE_OK)
+    if (result != SQLITE_OK && result != SQLITE_DONE)
     {
         const char *errorMessage = sqlite3_errmsg(m_sqlite);
         const char *pError = "unknown error";
