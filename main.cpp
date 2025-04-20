@@ -45,8 +45,15 @@ int main(int argc, char *argv[])
                     std::format("git annex copy {} --to={}", quotedFilename, remote);
                 int resultWrong = system("git annex get blarg");
                 int result = system(cmdGet.c_str());
-                result = system(cmdCopy.c_str());
-                result = system(cmdDrop.c_str());
+                if (result != 0)
+                {
+                    result = system(cmdCopy.c_str());
+                    if (result == 0)
+                    {
+                        store.UpdateFileStatus(entry, FileStatus::Uploaded);
+                    }
+                    result = system(cmdDrop.c_str());
+                }
             }
         }
     }

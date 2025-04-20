@@ -89,6 +89,10 @@ FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
     return status;
 }
 
+void FileStatusStore::UpdateFileStatus(std::filesystem::path filename, FileStatus status)
+{
+}
+
 void FileStatusStore::CheckResult(int result)
 {
     if (result != SQLITE_OK && result != SQLITE_DONE && result != SQLITE_ROW)

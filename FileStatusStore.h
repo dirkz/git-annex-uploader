@@ -7,7 +7,6 @@
 enum FileStatus
 {
     None,
-    CouldNotGet,
     Uploaded
 };
 
@@ -17,6 +16,7 @@ struct FileStatusStore
     ~FileStatusStore();
 
     FileStatus GetFileStatus(std::filesystem::path filename);
+    void UpdateFileStatus(std::filesystem::path filename, FileStatus status);
 
   private:
     void CheckResult(int result);
