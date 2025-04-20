@@ -23,12 +23,11 @@ int main(int argc, char *argv[])
     cout << "Remote " << remote << "\n";
     cout << "Processing " << directory << " ...\n";
 
+    fs::path current = fs::current_path();
+
+    FileStatusStore store{current};
+
     fs::current_path(directory);
-
-    fs::path exePath{argv[0]};
-    fs::path currentDir = exePath.parent_path();
-
-    FileStatusStore store{currentDir};
 
     auto it = fs::recursive_directory_iterator{directory};
     for (const fs::directory_entry &entry : it)
