@@ -2,6 +2,8 @@
 #include <filesystem>
 #include <iostream>
 
+#include "FileStatusStore.h"
+
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -20,6 +22,11 @@ int main(int argc, char *argv[])
     string remote{argv[2]};
     cout << "Remote " << remote << "\n";
     cout << "Processing " << directory << " ...\n";
+
+    fs::path exePath{argv[0]};
+    fs::path currentDir = exePath.parent_path();
+
+    FileStatusStore store{currentDir};
 
     auto it = fs::recursive_directory_iterator{directory};
     for (const fs::directory_entry &entry : it)
