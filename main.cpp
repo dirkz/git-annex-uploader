@@ -1,7 +1,9 @@
 ﻿#include <cstdlib>
+#include <filesystem>
 #include <iostream>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +20,15 @@ int main(int argc, char *argv[])
     string remote{argv[2]};
     cout << "Remote " << remote << "\n";
     cout << "Processing " << directory << " ...\n";
+
+    auto it = fs::recursive_directory_iterator{directory};
+    for (const fs::directory_entry &entry : it)
+    {
+        if (entry.is_symlink())
+        {
+            cout << "file " << entry << "\n";
+        }
+    }
 
     return 0;
 }
