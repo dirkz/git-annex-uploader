@@ -20,6 +20,10 @@ constexpr const char *CreateStatement = R"(
     CREATE INDEX IF NOT EXISTS filename_index ON files(name);
 )";
 
+constexpr const char *GetStatusQuery = R"(
+    SELECT status FROM files WHERE name = ?;
+)";
+
 FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
     : m_sqlFile{directory / "git_annex_uploader.sql"}
 {
@@ -40,10 +44,18 @@ FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
         sqlite3_free(errorMessage);
     }
     CheckSqliteError(result);
+
+    result = sqlite3_prepare_v2(m_sqlite, GetStatusQuery, -1, &m_stmtGetStatus, nullptr);
+    CheckSqliteError(result);
 }
 
 FileStatusStore::~FileStatusStore()
 {
+    if (m_stmtGetStatus)
+    {
+        sqlite3_finalize(m_stmtGetStatus);
+    }
+
     if (m_sqlite)
     {
         int result = sqlite3_close(m_sqlite);

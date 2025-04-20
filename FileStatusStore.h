@@ -13,5 +13,6 @@ struct FileStatusStore
 
   private:
     std::string m_sqlFile;
-    sqlite3 *m_sqlite;
+    sqlite3 *m_sqlite = nullptr;
+    sqlite3_stmt *m_stmtGetStatus = nullptr;
 };
