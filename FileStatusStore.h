@@ -16,6 +16,7 @@ struct FileStatusStore
     ~FileStatusStore();
 
     FileStatus GetFileStatus(std::filesystem::path filename);
+    int64_t GetFileID(std::filesystem::path filename);
     void UpdateFileStatus(std::filesystem::path filename, FileStatus status);
 
   private:
@@ -24,4 +25,5 @@ struct FileStatusStore
     std::string m_sqlFile;
     sqlite3 *m_sqlite = nullptr;
     sqlite3_stmt *m_stmtGetStatus = nullptr;
+    sqlite3_stmt *m_stmtGetID = nullptr;
 };

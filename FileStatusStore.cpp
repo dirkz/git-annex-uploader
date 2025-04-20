@@ -17,6 +17,10 @@ constexpr const char *GetStatusQuery = R"(
     SELECT status FROM files WHERE name = ?;
 )";
 
+constexpr const char *GetIDQuery = R"(
+    SELECT id FROM files WHERE name = ?;
+)";
+
 FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
     : m_sqlFile{directory / "git_annex_uploader.sql"}
 {
@@ -39,6 +43,9 @@ FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
     CheckResult(result);
 
     result = sqlite3_prepare_v2(m_sqlite, GetStatusQuery, -1, &m_stmtGetStatus, nullptr);
+    CheckResult(result);
+
+    result = sqlite3_prepare_v2(m_sqlite, GetIDQuery, -1, &m_stmtGetID, nullptr);
     CheckResult(result);
 }
 
@@ -73,14 +80,12 @@ FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
     switch (result)
     {
     case SQLITE_DONE:
-        status = FileStatus::None;
         break;
     case SQLITE_ROW:
         status = static_cast<FileStatus>(sqlite3_column_int(m_stmtGetStatus, 1));
         break;
     default:
         CheckResult(result);
-        status = FileStatus::None;
     }
 
     result = sqlite3_reset(m_stmtGetStatus);
@@ -89,8 +94,39 @@ FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
     return status;
 }
 
+int64_t FileStatusStore::GetFileID(std::filesystem::path filename)
+{
+    int result =
+        sqlite3_bind_text(m_stmtGetStatus, 1, filename.string().c_str(), -1, SQLITE_STATIC);
+    CheckResult(result);
+
+    int64_t id = -1;
+
+    result = sqlite3_step(m_stmtGetStatus);
+
+    switch (result)
+    {
+    case SQLITE_DONE:
+        break;
+    case SQLITE_ROW:
+        id = static_cast<int64_t>(sqlite3_column_int64(m_stmtGetStatus, 1));
+        break;
+    default:
+        CheckResult(result);
+    }
+
+    result = sqlite3_reset(m_stmtGetStatus);
+    CheckResult(result);
+
+    return id;
+}
+
 void FileStatusStore::UpdateFileStatus(std::filesystem::path filename, FileStatus status)
 {
+    int64_t existing = GetFileID(filename);
+    if (existing == -1)
+    {
+    }
 }
 
 void FileStatusStore::CheckResult(int result)
