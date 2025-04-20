@@ -15,8 +15,8 @@ struct FileStatusStore
     FileStatusStore(const std::filesystem::path &directory);
     ~FileStatusStore();
 
-    FileStatus GetFileStatus(std::filesystem::path filename);
-    void UpdateFileStatus(std::filesystem::path filename, FileStatus status);
+    FileStatus GetFileStatus(const std::filesystem::path &filename);
+    void UpdateFileStatus(const std::filesystem::path &filename, FileStatus status);
 
   private:
     void CheckResult(int result);

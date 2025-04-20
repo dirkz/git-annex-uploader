@@ -67,7 +67,7 @@ FileStatusStore::~FileStatusStore()
     }
 }
 
-FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
+FileStatus FileStatusStore::GetFileStatus(const std::filesystem::path &filename)
 {
     int result =
         sqlite3_bind_text(m_stmtGetStatus, 1, filename.string().c_str(), -1, SQLITE_STATIC);
@@ -94,10 +94,11 @@ FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
     return status;
 }
 
-void FileStatusStore::UpdateFileStatus(std::filesystem::path filename, FileStatus status)
+void FileStatusStore::UpdateFileStatus(const std::filesystem::path &filename, FileStatus status)
 {
-    int result =
-        sqlite3_bind_text(m_stmtInsertFile, 1, filename.string().c_str(), -1, SQLITE_STATIC);
+    const char *filenameString = filename.string().c_str();
+
+    int result = sqlite3_bind_text(m_stmtInsertFile, 1, filenameString, -1, SQLITE_STATIC);
     CheckResult(result);
 
     result = sqlite3_bind_int(m_stmtInsertFile, 2, static_cast<int>(status));
