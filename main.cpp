@@ -38,9 +38,15 @@ int main(int argc, char *argv[])
             FileStatus status = store.GetFileStatus(entry);
             if (status == FileStatus::None)
             {
-                std::string cmdGet = std::format("git annex get \"{}\"", entry.path().string());
-                std::string cmdDrop = std::format("git annex drop \"{}\"", entry.path().string());
-                std::cout << cmdGet << "\n";
+                std::string quotedFilename = std::string{"\""} + entry.path().string() + "\"";
+                std::string cmdGet = std::format("git annex get {}", quotedFilename);
+                std::string cmdDrop = std::format("git annex drop {}", quotedFilename);
+                std::string cmdCopy =
+                    std::format("git annex copy {} --to={}", quotedFilename, remote);
+                int resultWrong = system("git annex get blarg");
+                int result = system(cmdGet.c_str());
+                result = system(cmdCopy.c_str());
+                result = system(cmdDrop.c_str());
             }
         }
     }
