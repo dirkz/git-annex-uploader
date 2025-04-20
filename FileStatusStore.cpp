@@ -62,26 +62,36 @@ FileStatusStore::~FileStatusStore()
 
 FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
 {
-    int result = sqlite3_reset(m_stmtGetStatus);
+    int result =
+        sqlite3_bind_text(m_stmtGetStatus, 1, filename.string().c_str(), -1, SQLITE_STATIC);
     CheckResult(result);
 
-    result = sqlite3_bind_text(m_stmtGetStatus, 1, filename.string().c_str(), -1, SQLITE_STATIC);
-    CheckResult(result);
+    FileStatus status = FileStatus::None;
 
     result = sqlite3_step(m_stmtGetStatus);
-    CheckResult(result);
-    if (result != SQLITE_DONE)
+
+    switch (result)
     {
-        auto errorMsg = std::string{"double entry for "} + filename.string();
-        throw std::runtime_error{errorMsg};
+    case SQLITE_DONE:
+        status = FileStatus::None;
+        break;
+    case SQLITE_ROW:
+        status = static_cast<FileStatus>(sqlite3_column_int(m_stmtGetStatus, 1));
+        break;
+    default:
+        CheckResult(result);
+        status = FileStatus::None;
     }
 
-    return FileStatus::None;
+    result = sqlite3_reset(m_stmtGetStatus);
+    CheckResult(result);
+
+    return status;
 }
 
 void FileStatusStore::CheckResult(int result)
 {
-    if (result != SQLITE_OK && result != SQLITE_DONE)
+    if (result != SQLITE_OK && result != SQLITE_DONE && result != SQLITE_ROW)
     {
         const char *errorMessage = sqlite3_errmsg(m_sqlite);
         const char *pError = "unknown error";
