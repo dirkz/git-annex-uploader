@@ -6,7 +6,7 @@
 
 constexpr const char *CreateStatement = R"(
     CREATE TABLE IF NOT EXISTS files (
-        id INT PRIMARY KEY NOT NULL,
+        id INT PRIMARY KEY NOT NULL AUTOINCREMENT,
         name TEXT NOT NULL,
         status INT NOT NULL
     );
@@ -19,6 +19,10 @@ constexpr const char *GetStatusQuery = R"(
 
 constexpr const char *GetIDQuery = R"(
     SELECT id FROM files WHERE name = ?;
+)";
+
+constexpr const char *InsertFile = R"(
+    INSERT INTO files VALUES(?, ?);
 )";
 
 FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
@@ -46,6 +50,9 @@ FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
     CheckResult(result);
 
     result = sqlite3_prepare_v2(m_sqlite, GetIDQuery, -1, &m_stmtGetID, nullptr);
+    CheckResult(result);
+
+    result = sqlite3_prepare_v2(m_sqlite, InsertFile, -1, &m_stmtInsertFile, nullptr);
     CheckResult(result);
 }
 
