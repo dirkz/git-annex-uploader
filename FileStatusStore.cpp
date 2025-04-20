@@ -4,6 +4,21 @@
 #include <stdexcept>
 #include <string>
 
+enum FileStatus
+{
+    None,
+    CouldNotGet,
+    Uploaded
+};
+
+constexpr char *CreateStatement = R"(
+    CREATE TABLE IF NOT EXISTS files (
+        id INT PRIMARY KEY NOT NULL,
+        name TEXT NOT NULL,
+        status INT NOT NULL
+    );
+)";
+
 FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
     : m_sqlFile{directory / "git_annex_uploader.sql"}
 {
@@ -15,6 +30,15 @@ FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
         std::cerr << errorMsg << "\n";
         throw std::runtime_error{errorMsg};
     }
+
+    char *errorMessage = nullptr;
+    result = sqlite3_exec(m_sqlite, CreateStatement, nullptr, nullptr, &errorMessage);
+    if (errorMessage)
+    {
+        std::cerr << "SQL error: " << errorMessage << "\n";
+        sqlite3_free(errorMessage);
+    }
+    CheckSqliteError(result);
 }
 
 FileStatusStore::~FileStatusStore()
@@ -27,5 +51,19 @@ FileStatusStore::~FileStatusStore()
             std::string errorMsg = "Could not close database: " + m_sqlFile;
             std::cerr << errorMsg << "\n";
         }
+    }
+}
+void FileStatusStore::CheckSqliteError(int result)
+{
+    if (result != SQLITE_OK)
+    {
+        const char *errorMessage = sqlite3_errmsg(m_sqlite);
+        const char *pError = "unknown error";
+        if (errorMessage)
+        {
+            pError = errorMessage;
+        }
+        std::string errorString = std::string{"sqlite3 error: "} + pError;
+        throw std::runtime_error{errorString};
     }
 };
