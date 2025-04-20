@@ -4,13 +4,6 @@
 #include <stdexcept>
 #include <string>
 
-enum FileStatus
-{
-    None,
-    CouldNotGet,
-    Uploaded
-};
-
 constexpr const char *CreateStatement = R"(
     CREATE TABLE IF NOT EXISTS files (
         id INT PRIMARY KEY NOT NULL,
@@ -36,17 +29,17 @@ FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
         throw std::runtime_error{errorMsg};
     }
 
-    char *errorMessage = nullptr;
-    result = sqlite3_exec(m_sqlite, CreateStatement, nullptr, nullptr, &errorMessage);
-    if (errorMessage)
+    char *errorMsg = nullptr;
+    result = sqlite3_exec(m_sqlite, CreateStatement, nullptr, nullptr, &errorMsg);
+    if (errorMsg)
     {
-        std::cerr << "SQL error: " << errorMessage << "\n";
-        sqlite3_free(errorMessage);
+        std::cerr << "SQL error: " << errorMsg << "\n";
+        sqlite3_free(errorMsg);
     }
-    CheckSqliteError(result);
+    CheckResult(result);
 
     result = sqlite3_prepare_v2(m_sqlite, GetStatusQuery, -1, &m_stmtGetStatus, nullptr);
-    CheckSqliteError(result);
+    CheckResult(result);
 }
 
 FileStatusStore::~FileStatusStore()
@@ -66,7 +59,26 @@ FileStatusStore::~FileStatusStore()
         }
     }
 }
-void FileStatusStore::CheckSqliteError(int result)
+
+FileStatus FileStatusStore::GetFileStatus(std::filesystem::path filename)
+{
+    int result = sqlite3_reset(m_stmtGetStatus);
+    CheckResult(result);
+
+    result = sqlite3_bind_text(m_stmtGetStatus, 1, filename.string().c_str(), -1, SQLITE_STATIC);
+    CheckResult(result);
+
+    result = sqlite3_step(m_stmtGetStatus);
+    if (result != SQLITE_DONE)
+    {
+        auto errorMsg = std::string{"double entry for "} + filename.string();
+        throw std::runtime_error{errorMsg};
+    }
+
+    return FileStatus::None;
+}
+
+void FileStatusStore::CheckResult(int result)
 {
     if (result != SQLITE_OK)
     {

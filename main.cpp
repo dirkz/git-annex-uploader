@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     {
         if (entry.is_symlink())
         {
-            cout << "file " << entry << "\n";
+            FileStatus status = store.GetFileStatus(entry);
         }
     }
 
