@@ -16,9 +16,9 @@ add_executable (${CMAKE_PROJECT_NAME} "main.cpp" "FileStatusStore.h" "FileStatus
 
 find_package(SQLite3 REQUIRED)
 
-if(SQLITE3_FOUND)
-  include_directories(${SQLITE3_INCLUDE_DIRS})
-  target_link_libraries(${CMAKE_PROJECT_NAME} ${SQLITE3_LIBRARIES})
+if(SQLite3_FOUND)
+  include_directories(${SQLite3_INCLUDE_DIRS})
+  target_link_libraries(${CMAKE_PROJECT_NAME} ${SQLite3_LIBRARIES})
 endif(SQLITE3_FOUND)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
