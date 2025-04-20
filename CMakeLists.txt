@@ -11,6 +11,13 @@ endif()
 
 project ("git-annex-uploader")
 
+find_package (SQLite3)
+
+if(SQLITE3_FOUND)
+  include_directories(${SQLITE3_INCLUDE_DIRS})
+  target_link_libraries (${CMAKE_PROJECT_NAME} ${SQLITE3_LIBRARIES})
+endif(SQLITE3_FOUND)
+
 # Add source to this project's executable.
 add_executable (${CMAKE_PROJECT_NAME} "main.cpp" "FileStatusStore.h" "FileStatusStore.cpp")
 
