@@ -11,6 +11,9 @@ FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
     int result = sqlite3_open(m_sqlFile.c_str(), &m_sqlite);
     if (result != SQLITE_OK)
     {
+        std::string errorMsg = "Could not open database: " + m_sqlFile;
+        std::cerr << errorMsg << "\n";
+        throw std::runtime_error{errorMsg};
     }
 }
 
