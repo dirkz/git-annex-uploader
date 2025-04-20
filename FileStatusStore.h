@@ -1,8 +1,8 @@
 #pragma once
 
-#include <sqlite3.h>
-
 #include <filesystem>
+
+#include "sqlite3.h"
 
 struct FileStatusStore
 {

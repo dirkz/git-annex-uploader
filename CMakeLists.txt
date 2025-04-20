@@ -12,14 +12,7 @@ endif()
 project ("git-annex-uploader")
 
 # Add source to this project's executable.
-add_executable (${CMAKE_PROJECT_NAME} "main.cpp" "FileStatusStore.h" "FileStatusStore.cpp")
-
-find_package(SQLite3 REQUIRED)
-
-if(SQLite3_FOUND)
-  include_directories(${SQLite3_INCLUDE_DIRS})
-  target_link_libraries(${CMAKE_PROJECT_NAME} ${SQLite3_LIBRARIES})
-endif(SQLITE3_FOUND)
+add_executable (${CMAKE_PROJECT_NAME} "main.cpp" "FileStatusStore.h" "FileStatusStore.cpp" sqlite3.h sqlite3.c)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${CMAKE_PROJECT_NAME} PROPERTY CXX_STANDARD 20)
