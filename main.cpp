@@ -2,11 +2,14 @@
 //
 
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
 
 int main()
 {
-	cout << "Hello CMake." << endl;
+	int result = std::system("git annex");
+	cout << "result " << result << "\n";
+
 	return 0;
 }
