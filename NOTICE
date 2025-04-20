@@ -1,2 +1,5 @@
 git annex uploader
 Copyright 2025 Dirk Zimmermann
+
+sqlite3.c, sqlite3.h are in the public domain
+https://sqlite.org/copyright.html
