@@ -22,7 +22,7 @@ struct FileStatusStore
     void CheckResult(int result);
 
     std::string m_sqlFile;
-    sqlite3 *m_sqlite = nullptr;
-    sqlite3_stmt *m_stmtGetStatus = nullptr;
-    sqlite3_stmt *m_stmtInsertFile = nullptr;
+    sqlite3 *m_sqlite;
+    sqlite3_stmt *m_stmtGetStatus;
+    sqlite3_stmt *m_stmtInsertFile;
 };
