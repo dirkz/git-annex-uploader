@@ -22,7 +22,7 @@ constexpr const char *InsertFile = R"(
 )";
 
 FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
-    : m_sqlFile{directory / "git_annex_uploader.sql"}
+    : m_sqlFile{directory / "git_annex_uploader.sql"} /* TODO Bad naming */
 {
     std::cout << "SQL " << m_sqlFile << "\n";
     int result = sqlite3_open(m_sqlFile.c_str(), &m_sqlite);
