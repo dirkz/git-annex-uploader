@@ -46,12 +46,16 @@ int main(int argc, char *argv[])
                 int result = system(cmdGet.c_str());
                 if (result != 0)
                 {
+                    std::string errorMsg = std::format("error getting {}", entry.path().string());
+                    std::cerr << errorMsg << "\n";
                     continue;
                 }
 
                 result = system(cmdCopy.c_str());
                 if (result != 0)
                 {
+                    std::string errorMsg = std::format("error copying {}", entry.path().string());
+                    std::cerr << errorMsg << "\n";
                     continue;
                 }
 
