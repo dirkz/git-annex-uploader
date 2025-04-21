@@ -56,6 +56,11 @@ FileStatusStore::~FileStatusStore()
         sqlite3_finalize(m_stmtGetStatus);
     }
 
+    if (m_stmtInsertFile)
+    {
+        sqlite3_finalize(m_stmtInsertFile);
+    }
+
     if (m_sqlite)
     {
         int result = sqlite3_close(m_sqlite);
