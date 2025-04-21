@@ -87,9 +87,11 @@ FileStatus FileStatusStore::GetFileStatus(const std::filesystem::path &filename)
     {
     case SQLITE_DONE:
         break;
-    case SQLITE_ROW:
-        status = static_cast<FileStatus>(sqlite3_column_int(m_stmtGetStatus, 1));
+    case SQLITE_ROW: {
+        int s = sqlite3_column_int(m_stmtGetStatus, 0);
+        status = static_cast<FileStatus>(s);
         break;
+    }
     default:
         CheckResult(result);
     }
