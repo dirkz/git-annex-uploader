@@ -24,7 +24,7 @@ constexpr const char *InsertFile = R"(
 FileStatusStore::FileStatusStore(const std::filesystem::path &directory)
     : m_sqlFile{directory / "git_annex_uploader.sqlite"}
 {
-    std::cout << "SQL " << m_sqlFile << "\n";
+    std::cout << "Database: " << m_sqlFile << "\n";
     int result = sqlite3_open(m_sqlFile.c_str(), &m_sqlite);
     if (result != SQLITE_OK)
     {
