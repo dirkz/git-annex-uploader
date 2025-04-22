@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
 
     std::string directory{argv[1]};
     std::string remote{argv[2]};
-    std::cout << "Remote " << remote << "\n";
-    std::cout << "Processing " << directory << " ...\n";
+
+    std::cout << argv[0] << " " << directory << " " << remote << "\n";
 
     fs::path current = fs::current_path();
 
