@@ -8,16 +8,6 @@
 
 namespace fs = std::filesystem;
 
-static void Replace(std::string &s, const std::string &what, const std::string &with)
-{
-    size_t n = with.length();
-    size_t pos = 0;
-    while ((pos = s.find(what, pos)) != std::string::npos)
-    {
-        s.replace(pos, n, with);
-    }
-}
-
 int main(int argc, char *argv[])
 {
     if (argc != 3)
@@ -49,8 +39,7 @@ int main(int argc, char *argv[])
             if (status == FileStatus::None)
             {
                 std::string pathString = entry.path().string();
-                Replace(pathString, "`", "\\`");
-                std::string quotedFilename = std::string{"\""} + pathString + "\"";
+                std::string quotedFilename = std::string{"'"} + pathString + "'";
                 std::string cmdGet = std::format("git annex get {}", quotedFilename);
                 std::string cmdDrop = std::format("git annex drop {}", quotedFilename);
                 std::string cmdCopy =
